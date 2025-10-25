@@ -127,8 +127,8 @@ add_rounds(R=rnd[1]){
     }
 }
 
-addend = /* rnd[0] */ + rnd[0] * 2 /*- beta*/;
-//addend = 0;
+//addend = /* rnd[0] */ + rnd[0] * 2 /*- beta*/;
+addend = 0;
 translate([bx[0] + 10, 0, 0]){
     //add_rounds(R=rnd[0]){
     //   add_fillets(R=rnd[0]){
@@ -137,17 +137,17 @@ translate([bx[0] + 10, 0, 0]){
                     //bx[5] + rnd[1] * 2 - beta,
                     //wx[3] + rnd[1] * 2 - beta,
                     //hx[0] + rnd[1] * 2 - beta /*- alpha*/
-                    bx[5] + addend - beta,
-                    wx[3] + addend - beta,
-                    hx[0] + addend - beta /*alpha*/,
+                    bx[5] + addend - alpha,
+                    wx[3] + addend - alpha,
+                    hx[0] + addend - alpha /*alpha*/,
                 ]);
                 translate([
                     //bx[4] + rnd[1] - (beta / 2.0),
                     //wx[4] + rnd[1] - (beta / 2.0),
                     //hx[0] + rnd[1] * 2 - beta /*- alpha*/
-                    bx[4] + (addend - beta) / 2 /* - beta */,
-                    wx[4] + addend / 2 - beta,
-                    hx[0] + addend - beta
+                    bx[4] + (addend - alpha) / 2 /* - beta */,
+                    wx[4] + addend / 2 - alpha,
+                    hx[0] + addend - alpha
                 ])
                     cube([
                         bx[5] - 2 * bx[4],
