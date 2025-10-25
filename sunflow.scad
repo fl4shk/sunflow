@@ -16,7 +16,7 @@ tol_temp = /*1.0;*/ /*0.8;*/ 0.4;
 alpha = tol_temp;
 beta = tol_temp / 2.0;
 offs = /*0.20*/ 0.1;
-rnd = [/*0.5*/0.8, 0.8] /*2*/;
+rnd = [/*0.5*/0.2, 1.0/*0.8*/] /*2*/;
 
 //--------
 bx_temp = [
@@ -30,8 +30,8 @@ b3_temp = (
 bx = concat(
     bx_temp,
     [
-        b3_temp,                    // b3
-        2,                          // b4
+        b3_temp,                            // b3
+        bx_temp[1],                         // b4
         b3_temp + 2 * bx_temp[1] - alpha,   // b5
     ],
 );
@@ -45,7 +45,7 @@ wx = concat(
     wx_temp,
     [
         4,                          // w2
-        wx_temp[1] + bx[2] + bx[1]- alpha, // w3
+        wx_temp[1] + bx[2] + bx[1] - alpha, // w3
         3,                          // w4
     ]
 );
@@ -95,52 +95,66 @@ module cube_hull(cube_sz, sphere_r){
     }
 }
 
-add_rounds(R=rnd[0]){
-    //add_fillets(){
-        difference(){
-            cube(
-                /*cube_sz=*/[bx[0], wx[0], hx[1]],
-                //sphere_r=rnd,
-            );
-            minkowski(){
-                union(){
-                    translate([bx[2] - bx[1], 0, hx[3] + hx[4]])
-                        cube([
-                            2 * bx[1] + bx[3],
-                            bx[2] + bx[1] + wx[1],
-                            hx[0],
-                        ]);
-                    translate([bx[2], bx[2], hx[3]])
-                        cube([
-                            bx[3],
-                            wx[1],
-                            hx[4],
-                        ]);
-                    translate([bx[2], 0, hx[3] + hx[4]])
-                        cube([
-                            bx[3],
-                            bx[2] + wx[1],
-                            hx[0] + hx[2],
-                        ]);
-                }
-                sphere(r=rnd[0]);
+add_rounds(R=rnd[1]){
+    difference(){
+        cube(
+            /*cube_sz=*/[bx[0], wx[0], hx[1]],
+            //sphere_r=rnd,
+        );
+        minkowski(){
+            union(){
+                translate([bx[2] - bx[1], 0, hx[3] + hx[4]])
+                    cube([
+                        2 * bx[1] + bx[3],
+                        bx[2] + bx[1] + wx[1],
+                        hx[0],
+                    ]);
+                translate([bx[2], bx[2], hx[3]])
+                    cube([
+                        bx[3],
+                        wx[1],
+                        hx[4],
+                    ]);
+                translate([bx[2], 0, hx[3] + hx[4]])
+                    cube([
+                        bx[3],
+                        bx[2] + wx[1],
+                        hx[0] + hx[2],
+                    ]);
             }
+            sphere(r=rnd[0]);
         }
-    //}
+    }
 }
 
+addend = /* rnd[0] */ + rnd[0] * 2 /*- beta*/;
+//addend = 0;
 translate([bx[0] + 10, 0, 0]){
-    add_rounds(R=rnd[0]){
-        add_fillets(R=rnd[0]){
+    //add_rounds(R=rnd[0]){
+    //   add_fillets(R=rnd[0]){
             union(){
-                cube([bx[5], wx[3], hx[0] - alpha]);
-                translate([bx[4], wx[4], hx[0] - alpha])
+                cube([
+                    //bx[5] + rnd[1] * 2 - beta,
+                    //wx[3] + rnd[1] * 2 - beta,
+                    //hx[0] + rnd[1] * 2 - beta /*- alpha*/
+                    bx[5] + addend - beta,
+                    wx[3] + addend - beta,
+                    hx[0] + addend - beta /*alpha*/,
+                ]);
+                translate([
+                    //bx[4] + rnd[1] - (beta / 2.0),
+                    //wx[4] + rnd[1] - (beta / 2.0),
+                    //hx[0] + rnd[1] * 2 - beta /*- alpha*/
+                    bx[4] + (addend - beta) / 2 /* - beta */,
+                    wx[4] + addend / 2 - beta,
+                    hx[0] + addend - beta
+                ])
                     cube([
                         bx[5] - 2 * bx[4],
                         wx[2],
                         hx[5],
                     ]);
             }
-        }
-    }
+    //    }
+    //}
 }
