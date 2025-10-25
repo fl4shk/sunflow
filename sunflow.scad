@@ -16,13 +16,13 @@ tol_temp = /*1.0;*/ /*0.8;*/ 0.4;
 alpha = tol_temp;
 beta = tol_temp / 2.0;
 offs = /*0.20*/ 0.1;
-rnd = 0.5 /*2*/;
+rnd = [/*0.5*/0.8, 0.8] /*2*/;
 
 //--------
 bx_temp = [
     20,     // b0
     2,      // b1
-    4,      // b2
+    6,      // b2
 ];
 b3_temp = (
     bx_temp[0] - 2 * bx_temp[2]
@@ -32,7 +32,7 @@ bx = concat(
     [
         b3_temp,                    // b3
         2,                          // b4
-        b3_temp + 2 * bx_temp[1],   // b5
+        b3_temp + 2 * bx_temp[1] - alpha,   // b5
     ],
 );
 
@@ -45,7 +45,7 @@ wx = concat(
     wx_temp,
     [
         4,                          // w2
-        wx_temp[1] + bx[2] + bx[1], // w3
+        wx_temp[1] + bx[2] + bx[1]- alpha, // w3
         3,                          // w4
     ]
 );
@@ -95,7 +95,7 @@ module cube_hull(cube_sz, sphere_r){
     }
 }
 
-add_rounds(R=rnd){
+add_rounds(R=rnd[0]){
     //add_fillets(){
         difference(){
             cube(
@@ -123,18 +123,18 @@ add_rounds(R=rnd){
                             hx[0] + hx[2],
                         ]);
                 }
-                sphere(r=beta);
+                sphere(r=rnd[0]);
             }
         }
     //}
 }
 
 translate([bx[0] + 10, 0, 0]){
-    add_rounds(R=rnd){
-        add_fillets(R=rnd){
+    add_rounds(R=rnd[0]){
+        add_fillets(R=rnd[0]){
             union(){
-                cube([bx[5], wx[3], hx[0]]);
-                translate([bx[4], wx[4], hx[0]])
+                cube([bx[5], wx[3], hx[0] - alpha]);
+                translate([bx[4], wx[4], hx[0] - alpha])
                     cube([
                         bx[5] - 2 * bx[4],
                         wx[2],
